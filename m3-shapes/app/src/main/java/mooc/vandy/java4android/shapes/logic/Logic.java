@@ -230,20 +230,20 @@ public class Logic
     public static double boxSurfaceArea(double length, double width, double depth)
     {
         /* This Method Calculates the Area of a Box Surface
-            Formula: Area of a Box Surface = 2*(Length + Width)*Depth
+            Formula: Area of a Box Surface = 2*(Length*Width+Length*Depth+Width*Depth);
          */
         double bxSurfArea=0.0;
-        bxSurfArea = 2*(length+width)*depth;
+        bxSurfArea = 2*(length*width+length*depth+width*depth);
         return bxSurfArea;
     }
 
     public static double sphereVolume(double radius)
     {
         /* This Method Calculates the Volume of a Sphere
-            Formula: Volume of a Sphere = 4/3*PI*Radius*Radius*Radius
+            Formula: Volume of a Sphere = (4*PI*Radius*Radius*Radius)/3
          */
         double sphrVolume=0.0;
-        sphrVolume = 4/3*Math.PI*radius*radius*radius;
+        sphrVolume = (4*Math.PI*radius*radius*radius)/3;
         return sphrVolume;
 
     }
