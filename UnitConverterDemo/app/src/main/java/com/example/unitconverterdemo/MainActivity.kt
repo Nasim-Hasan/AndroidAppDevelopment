@@ -15,15 +15,23 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.unitconverterdemo.ui.theme.UnitConverterDemoTheme
+import kotlin.math.roundToInt
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,32 +47,74 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun UnitConverterDemo(){
+
+     var inputValue by remember {mutableStateOf("")};
+     var outputValue by remember {mutableStateOf("")};
+     var inputUnit by remember {mutableStateOf("Select")};
+     var iExpanded by remember {mutableStateOf(false)};
+     val iconversionFactor = remember{ mutableDoubleStateOf(1.0) };
+
+     fun convertUnit(){
+         val inputValueDouble = inputValue.toDoubleOrNull() ?: 0.0;
+         val result = (inputValueDouble*iconversionFactor.doubleValue*100.0).roundToInt()/100.0;
+         outputValue=result.toString();
+     }
+
       Column (modifier = Modifier.fillMaxSize(),
           horizontalAlignment = Alignment.CenterHorizontally,
           verticalArrangement = Arrangement.Center){
           /*...Arranges the Components in a Stacked Up Formation...*/
           Text("Unit Converter");
           Spacer(modifier = Modifier.height(16.dp));
-          OutlinedTextField(value ="Enter Value Here" , onValueChange = {});
+          OutlinedTextField(value =inputValue , onValueChange = {
+              inputValue = it;
+          }, label={Text("Enter the Meter Value")});
           Spacer(modifier = Modifier.height(16.dp));
           Row{
           /*...Arranges the Components in a Side-by-Side Formation...*/
+              //..Input Box.....//
               Box{
-                  Button(onClick = { /*TODO*/ }) {
-                      Text("Select");
+                  //..Input Button.....//
+                  Button(onClick = {iExpanded=true}) {
+                      Text(inputUnit);
                       Icon(Icons.Default.ArrowDropDown, contentDescription = "Arrow Drop Down");
                   }
-              }
-              Spacer(modifier = Modifier.width(8.dp));
-              Box{
-                  Button(onClick = { /*TODO*/ }) {
-                      Text("Select");
-                      Icon(Icons.Default.ArrowDropDown, contentDescription = "Arrow Drop Down");
+
+                  DropdownMenu(expanded = iExpanded, onDismissRequest = {iExpanded=false}) {
+                      DropdownMenuItem(text = { Text("Centimeter") }, onClick = {
+                           iExpanded = false;
+                           inputUnit ="Centimeter";
+                           iconversionFactor.doubleValue=100.0;
+                           convertUnit();
+
+                      });
+                      DropdownMenuItem(text = { Text("Meter") }, onClick = {
+                          iExpanded = false;
+                          inputUnit ="Meter";
+                          iconversionFactor.doubleValue=1.0;
+                          convertUnit();
+                      });
+                      DropdownMenuItem(text = { Text("Feet") }, onClick = {
+                          iExpanded = false;
+                          inputUnit ="Feet";
+                          iconversionFactor.doubleValue=0.3048;
+                          convertUnit();
+                      });
+                      DropdownMenuItem(text = { Text("Millimeter") }, onClick = {
+                          iExpanded = false;
+                          inputUnit ="Millimeter";
+                          iconversionFactor.doubleValue=1000.0;
+                          convertUnit();
+                      });
                   }
               }
           }
           Spacer(modifier = Modifier.height(16.dp));
-          Text("Result:");
+          if(inputUnit=="Select"){
+              Text("Result:");
+          }else{
+              Text("Result:$outputValue"+" "+inputUnit);
+          }
       }
 }
 
