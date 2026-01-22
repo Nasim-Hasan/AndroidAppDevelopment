@@ -10,6 +10,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.rememberNavController
 import com.example.recipeapp.ui.theme.RecipeAppTheme
 
 class MainActivity : ComponentActivity() {
@@ -17,10 +18,11 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            val navController = rememberNavController();
             RecipeAppTheme {
                 Surface(modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background){
-                     RecipeScreen(Modifier.fillMaxSize());
+                     RecipeApp(navController = navController);
                 }
             }
         }
@@ -31,6 +33,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun RecipeAppPreview() {
     RecipeAppTheme {
-        RecipeScreen( Modifier.fillMaxSize());
+        val navController = rememberNavController();
+        RecipeApp(navController = navController);
     }
 }
