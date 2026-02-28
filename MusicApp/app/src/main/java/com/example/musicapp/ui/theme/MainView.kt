@@ -1,13 +1,17 @@
 package com.example.musicapp.ui.theme
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.BottomNavigation
+import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
@@ -35,6 +39,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.musicapp.MainViewModel
 import com.example.musicapp.Screen
+import com.example.musicapp.screensInBottom
 import com.example.musicapp.screensInDrawer
 import kotlinx.coroutines.launch
 
@@ -50,7 +55,34 @@ fun MainView(){
     val currentRoute = navBackStackEntry?.destination?.route
     val currentScreen = remember{viewModel.getCurrentScreen().value}
     val title = remember{ mutableStateOf(currentScreen.title)}
+    val bottomBar:  @Composable () -> Unit = {
+        if(currentScreen is Screen.DrawerScreen || currentScreen == Screen.BottomScreen.Home){
+            BottomNavigation(Modifier.wrapContentSize()) {
+                screensInBottom.forEach{
+                        item ->
+                    val isSelected = currentRoute == item.bRoute
+                    Log.d("Navigation", "Item: ${item.bTitle}, Current Route: $currentRoute, Is Selected: $isSelected")
+                    val tint = if(isSelected)Color.White else Color.Black
+                    BottomNavigationItem(selected = currentRoute == item.bRoute,
+                        onClick = { controller.navigate(item.bRoute)
+                            title.value = item.bTitle
+                        }, icon = {
+
+                            Icon(tint= tint,
+                                contentDescription = item.bTitle, painter= painterResource(id = item.icon))
+                        },
+                        label = { Text(text = item.bTitle, color = tint )}
+                        , selectedContentColor = Color.White,
+                        unselectedContentColor = Color.Black
+
+                    )
+                }
+            }
+        }
+    }
+
     Scaffold(
+        bottomBar = bottomBar,
         topBar={
             TopAppBar(title = {Text(title.value)},
                 navigationIcon = {IconButton(onClick = { /*TODO*/
@@ -115,7 +147,16 @@ fun Navigation(navController: NavController, viewModel: MainViewModel, pd: Paddi
 
     NavHost(navController = navController as NavHostController,
         startDestination = Screen.DrawerScreen.Account.route, modifier = Modifier.padding(pd) ){
+        composable(Screen.BottomScreen.Home.bRoute){
+            //Home()
+        }
+        composable(Screen.BottomScreen.Browse.bRoute){
+            //Browse()
+        }
 
+        composable(Screen.BottomScreen.Library.bRoute){
+            //Library()
+        }
         composable(Screen.DrawerScreen.Account.route){
             AccountView()
         }
